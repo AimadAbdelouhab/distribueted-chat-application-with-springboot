@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.11.16-management
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  userService:
+    build: 
+      context: ./userService
+      dockerfile: Dockerfile
+    image: aimadabdelouhab/hpds_197211_userservice:latest
+    depends_on:
+      - rabbitmq
+      - chatapi
+
+  messageService:
+    build:
+      context: ./messageService
+      dockerfile: Dockerfile
+    image: aimadabdelouhab/hpds_197211_messageservice:latest
+    depends_on:
+      - rabbitmq
+      - chatapi
+
+  chatapi:
+    image: aimadabdelouhab/hpds_197211_chatapi:latest
+    build:
+      context: ./ChatApplicationApi
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    ports :
+      - '8090:8090'
+
+
